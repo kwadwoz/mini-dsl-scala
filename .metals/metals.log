@@ -1,0 +1,217 @@
+2026.03.13 16:40:38 INFO  Started: Metals version 1.6.6 in folders '/Users/zenasboamah/mini-dsl-scala/mini-dsl-scala' for client Visual Studio Code 1.100.3.
+2026.03.13 16:40:38 INFO  Memory monitor started
+2026.03.13 16:40:38 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.03.13 16:40:39 INFO  no build target found for /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala. Using presentation compiler with project's scala-library version: 3.3.7
+2026.03.13 16:40:39 INFO  Running List(/opt/homebrew/bin/scala-cli, setup-ide, /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala)
+2026.03.13 16:40:40 INFO  Attempting to connect to the build server...
+2026.03.13 16:40:40 INFO  Running BSP server List(/opt/homebrew/bin/scala-cli, bsp, --json-options, /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/.scala-build/ide-options-v2.json, --json-launcher-options, /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/.scala-build/ide-launcher-options.json, --envs-file, /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/.scala-build/ide-envs.json, /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala)
+2026.03.13 16:40:39 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/.metals/bsp.trace.json or /Users/zenasboamah/Library/Caches/org.scalameta.metals/bsp.trace.json
+2026.03.13 16:40:40 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 16:40:41 INFO  time: Connected to build server in 1.5s
+2026.03.13 16:40:41 INFO  Connected to Build server: scala-cli v1.12.4
+2026.03.13 16:40:41 INFO  time: Imported build in 0.18s
+2026.03.13 16:40:41 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 16:40:41 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.15s
+2026.03.13 16:40:44 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.03.13 16:40:44 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 16:40:44 INFO  time: indexed workspace in 3.03s
+2026.03.13 16:40:45 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 16:40:46 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 18:04:35 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 18:04:44 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 18:04:45 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 18:04:46 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+2026.03.13 18:04:47 WARN  Could not find semantic tokens for: file:///Users/zenasboamah/mini-dsl-scala/mini-dsl-scala/scanner.scala
+Mar 13, 2026 10:38:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint fallbackResponseError
+SEVERE: Internal error: java.lang.NullPointerException: Cannot invoke "Object.getClass()" because "this.tok" is null
+java.util.concurrent.CompletionException: java.lang.NullPointerException: Cannot invoke "Object.getClass()" because "this.tok" is null
+	at java.base/java.util.concurrent.CompletableFuture.wrapInCompletionException(CompletableFuture.java:323)
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:376)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:391)
+	at java.base/java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:729)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:531)
+	at java.base/java.util.concurrent.CompletableFuture.completeExceptionally(CompletableFuture.java:2221)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1(CancelTokens.scala:40)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1$adapted(CancelTokens.scala:38)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:517)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: java.lang.NullPointerException: Cannot invoke "Object.getClass()" because "this.tok" is null
+	at scala.meta.internal.parsers.ScalametaParser$XtensionToken.is(ScalametaParser.scala:559)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$peek(ScalametaParser.scala:573)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParam$8(ScalametaParser.scala:3357)
+	at scala.Option.getOrElse(Option.scala:201)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParam$1(ScalametaParser.scala:3349)
+	at scala.meta.internal.parsers.ScalametaParser.atPos(ScalametaParser.scala:339)
+	at scala.meta.internal.parsers.ScalametaParser.autoPos(ScalametaParser.scala:535)
+	at scala.meta.internal.parsers.ScalametaParser.termParam(ScalametaParser.scala:3312)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClauseOnParen$3(ScalametaParser.scala:3296)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClauseOnParen$3$adapted(ScalametaParser.scala:3296)
+	at scala.meta.internal.parsers.ScalametaParser.iter$1(ScalametaParser.scala:818)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$tokenSeparated$1(ScalametaParser.scala:823)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$tokenSeparated$1$adapted(ScalametaParser.scala:811)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$listBy(ScalametaParser.scala:733)
+	at scala.meta.internal.parsers.ScalametaParser.tokenSeparated(ScalametaParser.scala:811)
+	at scala.meta.internal.parsers.ScalametaParser.commaSeparatedWithIndex(ScalametaParser.scala:832)
+	at scala.meta.internal.parsers.ScalametaParser.parseParams$1(ScalametaParser.scala:3296)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClauseOnParen$4(ScalametaParser.scala:3308)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$inParensAfterOpenOr(ScalametaParser.scala:261)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$inParensOnOpenOr(ScalametaParser.scala:252)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClauseOnParen$1(ScalametaParser.scala:3309)
+	at scala.meta.internal.parsers.ScalametaParser.atPos(ScalametaParser.scala:339)
+	at scala.meta.internal.parsers.ScalametaParser.autoPos(ScalametaParser.scala:535)
+	at scala.meta.internal.parsers.ScalametaParser.termParamClauseOnParen(ScalametaParser.scala:3289)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClausesOnParen$1(ScalametaParser.scala:3279)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$termParamClausesOnParen$1$adapted(ScalametaParser.scala:3276)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$listBy(ScalametaParser.scala:733)
+	at scala.meta.internal.parsers.ScalametaParser.termParamClausesOnParen(ScalametaParser.scala:3276)
+	at scala.meta.internal.parsers.ScalametaParser.termParamClauses(ScalametaParser.scala:3271)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$primaryCtor$1(ScalametaParser.scala:4018)
+	at scala.meta.internal.parsers.ScalametaParser.atPos(ScalametaParser.scala:339)
+	at scala.meta.internal.parsers.ScalametaParser.autoPos(ScalametaParser.scala:535)
+	at scala.meta.internal.parsers.ScalametaParser.primaryCtor(ScalametaParser.scala:4009)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$enumDef$1(ScalametaParser.scala:3979)
+	at scala.meta.internal.parsers.NestedContext.within(NestedContext.scala:8)
+	at scala.meta.internal.parsers.NestedContext.within$(NestedContext.scala:6)
+	at scala.meta.internal.parsers.NestedContextWithOwner.within(NestedContext.scala:17)
+	at scala.meta.internal.parsers.NestedContextWithOwner.within(NestedContext.scala:22)
+	at scala.meta.internal.parsers.ScalametaParser.enumDef(ScalametaParser.scala:3975)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$tmplDef$1(ScalametaParser.scala:3936)
+	at scala.meta.internal.parsers.ScalametaParser.autoEndPosOpt(ScalametaParser.scala:543)
+	at scala.meta.internal.parsers.ScalametaParser.autoEndPosOpt(ScalametaParser.scala:547)
+	at scala.meta.internal.parsers.ScalametaParser.tmplDef(ScalametaParser.scala:3934)
+	at scala.meta.internal.parsers.ScalametaParser.defOrDclOrSecondaryCtor(ScalametaParser.scala:3575)
+	at scala.meta.internal.parsers.ScalametaParser.nonLocalDefOrDcl(ScalametaParser.scala:3543)
+	at scala.meta.internal.parsers.ScalametaParser$$anonfun$2.applyOrElse(ScalametaParser.scala:4418)
+	at scala.meta.internal.parsers.ScalametaParser$$anonfun$2.applyOrElse(ScalametaParser.scala:4410)
+	at scala.PartialFunction.$anonfun$runWith$1(PartialFunction.scala:242)
+	at scala.PartialFunction.$anonfun$runWith$1$adapted(PartialFunction.scala:241)
+	at scala.meta.internal.parsers.ScalametaParser.statSeqBuf(ScalametaParser.scala:4403)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$statSeq$1(ScalametaParser.scala:4392)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$statSeq$1$adapted(ScalametaParser.scala:4392)
+	at scala.meta.internal.parsers.ScalametaParser.scala$meta$internal$parsers$ScalametaParser$$listBy(ScalametaParser.scala:733)
+	at scala.meta.internal.parsers.ScalametaParser.statSeq(ScalametaParser.scala:4392)
+	at scala.meta.internal.parsers.ScalametaParser.bracelessPackageStats$1(ScalametaParser.scala:4560)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$source$1(ScalametaParser.scala:4563)
+	at scala.meta.internal.parsers.ScalametaParser.atPos(ScalametaParser.scala:339)
+	at scala.meta.internal.parsers.ScalametaParser.autoPos(ScalametaParser.scala:535)
+	at scala.meta.internal.parsers.ScalametaParser.source(ScalametaParser.scala:4528)
+	at scala.meta.internal.parsers.ScalametaParser.entrypointSource(ScalametaParser.scala:4566)
+	at scala.meta.internal.parsers.ScalametaParser.parseSourceImpl(ScalametaParser.scala:113)
+	at scala.meta.internal.parsers.ScalametaParser.$anonfun$parseSource$1(ScalametaParser.scala:110)
+	at scala.meta.internal.parsers.ScalametaParser.parseRuleAfterBOF(ScalametaParser.scala:59)
+	at scala.meta.internal.parsers.ScalametaParser.parseRule(ScalametaParser.scala:54)
+	at scala.meta.internal.parsers.ScalametaParser.parseSource(ScalametaParser.scala:110)
+	at scala.meta.parsers.Parse$.$anonfun$parseSource$1(Parse.scala:32)
+	at scala.meta.parsers.Parse$$anon$1.apply(Parse.scala:44)
+	at scala.meta.parsers.Parse$$anon$1.apply(Parse.scala:38)
+	at scala.meta.internal.mtags.ScalametaCommonEnrichments$XtensionInputOffset.safeParse(ScalametaCommonEnrichments.scala:656)
+	at scala.meta.internal.parsing.Trees.$anonfun$parse$2(Trees.scala:228)
+	at scala.Option.map(Option.scala:242)
+	at scala.meta.internal.parsing.Trees.parse(Trees.scala:218)
+	at scala.meta.internal.parsing.Trees.didChange(Trees.scala:174)
+	at scala.meta.internal.metals.MetalsLspService.$anonfun$parseTreesAndPublishDiags$2(MetalsLspService.scala:627)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.scala:18)
+	at scala.concurrent.Future$.$anonfun$apply$1(Future.scala:691)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:500)
+	... 3 more
+
+Mar 13, 2026 10:40:38 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 775
+Mar 13, 2026 11:04:25 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 918
+Mar 13, 2026 11:19:01 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3652
+Mar 13, 2026 11:26:18 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 4025
+Mar 13, 2026 11:26:56 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 4338
+Mar 13, 2026 11:32:32 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 5671
+2026.03.13 23:32:51 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:32:51 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.39s
+2026.03.13 23:38:17 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:38:17 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.16s
+2026.03.13 23:48:54 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:48:54 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.44s
+Mar 13, 2026 11:49:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint fallbackResponseError
+SEVERE: Internal error: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 691
+java.util.concurrent.CompletionException: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 691
+	at java.base/java.util.concurrent.CompletableFuture.wrapInCompletionException(CompletableFuture.java:323)
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:376)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:391)
+	at java.base/java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:729)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:531)
+	at java.base/java.util.concurrent.CompletableFuture.completeExceptionally(CompletableFuture.java:2221)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1(CancelTokens.scala:40)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1$adapted(CancelTokens.scala:38)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:517)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 691
+	at java.base/jdk.internal.util.Preconditions$1.apply(Preconditions.java:55)
+	at java.base/jdk.internal.util.Preconditions$1.apply(Preconditions.java:52)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Preconditions.java:213)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Preconditions.java:210)
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:98)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckFromToIndex(Preconditions.java:112)
+	at java.base/jdk.internal.util.Preconditions.checkFromToIndex(Preconditions.java:349)
+	at java.base/java.lang.String.checkBoundsBeginEnd(String.java:4937)
+	at java.base/java.lang.String.substring(String.java:2899)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.getIndentForPos(FlatMapToForComprehensionCodeAction.scala:679)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$4(FlatMapToForComprehensionCodeAction.scala:59)
+	at scala.Option.map(Option.scala:242)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$3(FlatMapToForComprehensionCodeAction.scala:55)
+	at scala.Option.flatMap(Option.scala:283)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$2(FlatMapToForComprehensionCodeAction.scala:54)
+	at scala.Option.flatMap(Option.scala:283)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$1(FlatMapToForComprehensionCodeAction.scala:53)
+	at scala.concurrent.Future$.$anonfun$apply$1(Future.scala:691)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:500)
+	... 3 more
+
+Mar 13, 2026 11:49:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint fallbackResponseError
+SEVERE: Internal error: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 690
+java.util.concurrent.CompletionException: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 690
+	at java.base/java.util.concurrent.CompletableFuture.wrapInCompletionException(CompletableFuture.java:323)
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:376)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:391)
+	at java.base/java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:729)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:531)
+	at java.base/java.util.concurrent.CompletableFuture.completeExceptionally(CompletableFuture.java:2221)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1(CancelTokens.scala:40)
+	at scala.meta.internal.metals.CancelTokens$.$anonfun$future$1$adapted(CancelTokens.scala:38)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:517)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: java.lang.StringIndexOutOfBoundsException: Range [680, 692) out of bounds for length 690
+	at java.base/jdk.internal.util.Preconditions$1.apply(Preconditions.java:55)
+	at java.base/jdk.internal.util.Preconditions$1.apply(Preconditions.java:52)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Preconditions.java:213)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Preconditions.java:210)
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:98)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckFromToIndex(Preconditions.java:112)
+	at java.base/jdk.internal.util.Preconditions.checkFromToIndex(Preconditions.java:349)
+	at java.base/java.lang.String.checkBoundsBeginEnd(String.java:4937)
+	at java.base/java.lang.String.substring(String.java:2899)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.getIndentForPos(FlatMapToForComprehensionCodeAction.scala:679)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$4(FlatMapToForComprehensionCodeAction.scala:59)
+	at scala.Option.map(Option.scala:242)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$3(FlatMapToForComprehensionCodeAction.scala:55)
+	at scala.Option.flatMap(Option.scala:283)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$2(FlatMapToForComprehensionCodeAction.scala:54)
+	at scala.Option.flatMap(Option.scala:283)
+	at scala.meta.internal.metals.codeactions.FlatMapToForComprehensionCodeAction.$anonfun$contribute$1(FlatMapToForComprehensionCodeAction.scala:53)
+	at scala.concurrent.Future$.$anonfun$apply$1(Future.scala:691)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:500)
+	... 3 more
+
+2026.03.13 23:49:30 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:49:30 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.27s
+2026.03.13 23:49:54 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:49:54 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.19s
+2026.03.13 23:50:07 INFO  compiling mini-dsl-scala_d5c0a6989e (1 scala source)
+2026.03.13 23:50:07 INFO  time: compiled mini-dsl-scala_d5c0a6989e in 0.13s
