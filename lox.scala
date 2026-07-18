@@ -22,8 +22,8 @@ object Lox:
     // Pretty-print the parsed AST so we can see step 1+2.
     println("=== AST ===")
     statements.foreach(s => println(AstPrinter.print(s)))
-    // Step 3: generate Verilog + Python client for the FPGA.
-    val gen = VerilogCodegen.generate(statements)
+    // Step 3: generate Verilog + Python client for the FPGA (FSM backend).
+    val gen = FsmCodegen.generate(statements)
     java.nio.file.Files.writeString(java.nio.file.Path.of("design.v"), gen.verilog)
     java.nio.file.Files.writeString(java.nio.file.Path.of("client_sdk.py"), gen.python)
     println("\n=== design.v ===")
@@ -56,9 +56,13 @@ object AstPrinter:
 @main def main(): Unit =
   val source =
     """
-      |var a;            // host-writable input register
-      |var b;            // host-writable input register
-      |var c = a * b + 2; // computed in hardware
-      |return c;         // mirrored into RESULT
+      |var n;              // host input
+      |var i = 0;
+      |var sum = 0;
+      |while (i < n) {     // loop -> FSM
+      |  sum = sum + i;
+      |  i = i + 1;
+      |}
+      |return sum;         // sum of 0..n-1
       |""".stripMargin
   Lox.run(source)
