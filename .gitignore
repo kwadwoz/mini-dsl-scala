@@ -1,0 +1,9 @@
+.bloop/
+.bsp/
+.metals/
+.scala-build/
+.vscode/
+target/
+*.class
+*.tasty
+.DS_Store
