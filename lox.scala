@@ -19,8 +19,17 @@ object Lox:
     val tokens = Scanner(source).scanTokens()
     val statements = Parser(tokens).parse()
     if hadError then return
-    // For now, just pretty-print the parsed AST so we can see it works.
+    // Pretty-print the parsed AST so we can see step 1+2.
+    println("=== AST ===")
     statements.foreach(s => println(AstPrinter.print(s)))
+    // Step 3: generate Verilog + Python client for the FPGA.
+    val gen = VerilogCodegen.generate(statements)
+    java.nio.file.Files.writeString(java.nio.file.Path.of("design.v"), gen.verilog)
+    java.nio.file.Files.writeString(java.nio.file.Path.of("client_sdk.py"), gen.python)
+    println("\n=== design.v ===")
+    println(gen.verilog)
+    println("=== client_sdk.py ===")
+    println(gen.python)
 
 // A tiny AST pretty-printer so we can eyeball parser output.
 object AstPrinter:
@@ -47,14 +56,9 @@ object AstPrinter:
 @main def main(): Unit =
   val source =
     """
-      |var a = 3;
-      |var b = 4;
-      |var c = a * b + 2;
-      |if (c > 10) {
-      |  print c;
-      |} else {
-      |  print 0;
-      |}
-      |return c;
+      |var a;            // host-writable input register
+      |var b;            // host-writable input register
+      |var c = a * b + 2; // computed in hardware
+      |return c;         // mirrored into RESULT
       |""".stripMargin
   Lox.run(source)
