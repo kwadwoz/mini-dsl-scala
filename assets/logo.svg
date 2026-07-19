@@ -1,0 +1,57 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="mini-dsl-scala logo">
+  <defs>
+    <linearGradient id="chip" x1="40" y1="40" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5B8CFF"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+    <linearGradient id="trace" x1="70" y1="120" x2="180" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67E8F9"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- FPGA pins -->
+  <g fill="url(#chip)">
+    <rect x="72"  y="18" width="12" height="20" rx="3"/>
+    <rect x="114" y="18" width="12" height="20" rx="3"/>
+    <rect x="156" y="18" width="12" height="20" rx="3"/>
+    <rect x="72"  y="202" width="12" height="20" rx="3"/>
+    <rect x="114" y="202" width="12" height="20" rx="3"/>
+    <rect x="156" y="202" width="12" height="20" rx="3"/>
+    <rect x="18"  y="72"  width="20" height="12" rx="3"/>
+    <rect x="18"  y="114" width="20" height="12" rx="3"/>
+    <rect x="18"  y="156" width="20" height="12" rx="3"/>
+    <rect x="202" y="72"  width="20" height="12" rx="3"/>
+    <rect x="202" y="114" width="20" height="12" rx="3"/>
+    <rect x="202" y="156" width="20" height="12" rx="3"/>
+  </g>
+
+  <!-- chip body -->
+  <rect x="38" y="38" width="164" height="164" rx="26" fill="url(#chip)"/>
+  <rect x="38" y="38" width="164" height="164" rx="26" fill="#0B1020" fill-opacity="0.82"/>
+  <rect x="39.5" y="39.5" width="161" height="161" rx="24.5" stroke="url(#chip)" stroke-width="3"/>
+
+  <!-- code braces: { } -->
+  <path d="M104 82 C 92 82, 92 96, 92 106 C 92 114, 86 120, 80 120 C 86 120, 92 126, 92 134 C 92 144, 92 158, 104 158"
+        stroke="url(#trace)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M136 82 C 148 82, 148 96, 148 106 C 148 114, 154 120, 160 120 C 154 120, 148 126, 148 134 C 148 144, 148 158, 136 158"
+        stroke="url(#trace)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- central node = the compiled circuit -->
+  <circle cx="120" cy="120" r="9" fill="url(#trace)"/>
+  <circle cx="120" cy="120" r="9" stroke="#0B1020" stroke-opacity="0.35" stroke-width="2"/>
+
+  <!-- traces from node out to the pins (code -> hardware) -->
+  <g stroke="url(#trace)" stroke-width="4" stroke-linecap="round" opacity="0.9" fill="none">
+    <path d="M120 111 V 60"/>
+    <path d="M120 129 V 180"/>
+    <path d="M120 120 H 62"/>
+    <path d="M120 120 H 178"/>
+  </g>
+  <g fill="#67E8F9">
+    <circle cx="120" cy="60" r="4"/>
+    <circle cx="120" cy="180" r="4"/>
+    <circle cx="62" cy="120" r="4"/>
+    <circle cx="178" cy="120" r="4"/>
+  </g>
+</svg>
