@@ -330,31 +330,51 @@ enormous room to grow the language.
 
 ## Results on real hardware
 
-<!-- TODO: fill this section in after running on the Manhattan cloud. -->
-
-**Utilization (ECP5-85F)**
-
-<!-- Paste the `mrg synth` / nextpnr report, or a table: -->
-
-| Design            | LUT4   | FF     | Fmax (MHz) | % of ECP5-85F |
-| ----------------- | ------ | ------ | ---------- | ------------- |
-| `sum(0..n-1)`     | ~407   | 171    | _TODO_     | ~0.5%         |
-| `max(a, b)`       | _TODO_ | _TODO_ | _TODO_     | _TODO_        |
-
-**Live run output**
-
-<!-- Paste the `mrg run client_sdk.py` console output here. -->
+The `sum(0..n-1)` design was compiled by this project, built by the Manhattan
+Reasoning cloud (Yosys + nextpnr for the ECP5-85F), programmed onto **`fpga3`**,
+and driven over Wishbone registers — returning correct results read back off real
+silicon:
 
 ```text
-TODO: paste `mrg run client_sdk.py` output
+[submit] HTTP 202: {"job_id":"ac204d02-...","fpga_id":null,"status":"running"}
+[build] status=complete fpga_id=3
+[build] complete on fpga3
+
+>>> sum(0..9)  = 45     (expected 45)     MATCH
+>>> sum(0..4)  = 10     (expected 10)     MATCH
+>>> sum(0..12) = 78     (expected 78)     MATCH
+>>> sum(0..99) = 4950   (expected 4950)   MATCH
 ```
+
+**Utilization (local Yosys `synth_ecp5`)**
+
+| Design            | LUT4 | FF  | % of ECP5-85F |
+| ----------------- | ---- | --- | ------------- |
+| `sum(0..n-1)`     | 407  | 171 | ~0.49%        |
+| `gcd(a, b)`       | 297  | 209 | ~0.36%        |
+
+**Deploying it yourself**
+
+```bash
+scala-cli run . -- examples/sum.dsl   # generate design.v
+python3 deploy.py 10                   # build in the cloud + drive the board
+# or, against an already-programmed board:
+python3 run_regs.py <fpga_id> <n>
+```
+
+> **Note on the SDK:** the installed `manhattan_reasoning_gym` builds board-scoped
+> job URLs (`/fpga/{id}/submit`, `/fpga/{id}/jobs/{job_id}`) that 404. The real
+> orchestrator uses **top-level** routes: `POST /submit` (the server assigns a
+> board *after* the build) and `GET /jobs/{job_id}`. Register I/O
+> (`POST /fpga/{id}/run`) is correct. The `deploy.py` / `run_regs.py` helpers use
+> the corrected routes.
 
 **Photos / screenshots**
 
 <!-- ![FPGA result](assets/fpga_result.png) -->
 <!-- ![Board / dashboard](assets/board.jpg) -->
 
-> _Figures and hardware results to be added._
+> _Board photos / dashboard screenshots and a demo video to be added._
 
 ---
 
@@ -387,7 +407,7 @@ are git-ignored.
 - [ ] Functions → reusable hardware sub-FSMs
 - [ ] Map `*` onto ECP5 DSP `MULT18X18` blocks
 - [ ] Report Fmax / timing (nextpnr) alongside utilization
-- [ ] Deploy on the Manhattan cloud and record results + video
+- [x] Deploy on the Manhattan cloud (`sum` verified on `fpga3`); record video next
 - [ ] More types (signed integers, booleans as 1-bit)
 
 ---
