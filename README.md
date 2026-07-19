@@ -330,37 +330,43 @@ enormous room to grow the language.
 
 ## Results on real hardware
 
-The `sum(0..n-1)` design was compiled by this project, built by the Manhattan
-Reasoning cloud (Yosys + nextpnr for the ECP5-85F), programmed onto **`fpga3`**,
-and driven over Wishbone registers — returning correct results read back off real
+All three example programs were compiled by this project, built by the Manhattan
+Reasoning cloud (Yosys + nextpnr for the ECP5-85F), programmed onto a board, and
+driven over Wishbone registers — returning correct results read back off real
 silicon:
 
 ```text
-[submit] HTTP 202: {"job_id":"ac204d02-...","fpga_id":null,"status":"running"}
-[build] status=complete fpga_id=3
-[build] complete on fpga3
-
+# sum(0..n-1)  — built on fpga3
 >>> sum(0..9)  = 45     (expected 45)     MATCH
->>> sum(0..4)  = 10     (expected 10)     MATCH
->>> sum(0..12) = 78     (expected 78)     MATCH
 >>> sum(0..99) = 4950   (expected 4950)   MATCH
+
+# max(a, b)  — built on fpga2
+>>> a=7,b=3    -> 7      >>> a=2,b=9  -> 9
+>>> a=4,b=4    -> 4      >>> a=13,b=5 -> 13
+
+# gcd(a, b)  — built on fpga6
+>>> a=12,b=8   -> 4      >>> a=48,b=36  -> 12
+>>> a=7,b=13   -> 1      >>> a=100,b=60 -> 20     >>> a=9,b=9 -> 9
 ```
 
 **Utilization (local Yosys `synth_ecp5`)**
 
-| Design            | LUT4 | FF  | % of ECP5-85F |
-| ----------------- | ---- | --- | ------------- |
-| `sum(0..n-1)`     | 407  | 171 | ~0.49%        |
-| `gcd(a, b)`       | 297  | 209 | ~0.36%        |
+| Design            | LUT4 | FF  | % of ECP5-85F | Verified on |
+| ----------------- | ---- | --- | ------------- | ----------- |
+| `sum(0..n-1)`     | 407  | 171 | ~0.49%        | `fpga3`     |
+| `max(a, b)`       | 138  | 170 | ~0.16%        | `fpga2`     |
+| `gcd(a, b)`       | 297  | 209 | ~0.36%        | `fpga6`     |
 
 **Deploying it yourself**
 
 ```bash
-scala-cli run . -- examples/sum.dsl   # generate design.v
-python3 deploy.py 10                   # build in the cloud + drive the board
-# or, against an already-programmed board:
-python3 run_regs.py <fpga_id> <n>
+scala-cli run . -- examples/max.dsl        # generate design.v + client_sdk.py
+python3 deploy_any.py "a=7,b=3" "a=2,b=9"  # build in the cloud + drive any inputs
 ```
+
+`deploy_any.py` reads the register map from the generated `client_sdk.py`, so it
+works for any program. (`deploy.py` / `run_regs.py` are the earlier
+single-purpose `sum` variants.)
 
 > **Note on the SDK:** the installed `manhattan_reasoning_gym` builds board-scoped
 > job URLs (`/fpga/{id}/submit`, `/fpga/{id}/jobs/{job_id}`) that 404. The real
@@ -407,7 +413,7 @@ are git-ignored.
 - [ ] Functions → reusable hardware sub-FSMs
 - [ ] Map `*` onto ECP5 DSP `MULT18X18` blocks
 - [ ] Report Fmax / timing (nextpnr) alongside utilization
-- [x] Deploy on the Manhattan cloud (`sum` verified on `fpga3`); record video next
+- [x] Deploy on the Manhattan cloud — `sum`, `max`, `gcd` all verified on real ECP5 boards; record video next
 - [ ] More types (signed integers, booleans as 1-bit)
 
 ---
