@@ -24,21 +24,23 @@ object FsmCodegen:
   private case class Finish(e: Option[Expr])               extends Instr // result<=e; done
 
   def generate(statements: List[Stmt], appName: String = "mini_dsl"): Generated =
-    // 1. Inputs are uninitialized top-level vars; everything else assigned is internal.
-    val inputs   = LinkedHashSet.empty[String]
-    val internal = LinkedHashSet.empty[String]
+    // 1. A var is a host INPUT only if declared without an initializer AND never
+    //    assigned. Everything that is ever assigned is an INTERNAL register.
+    val declaredNone = LinkedHashSet.empty[String] // `var x;`
+    val assigned     = LinkedHashSet.empty[String] // ever written (init or `=`)
 
     def scanTargets(s: Stmt): Unit = s match
-      case Stmt.VarDecl(n, None)       => inputs += n.lexeme
-      case Stmt.VarDecl(n, Some(_))    => internal += n.lexeme
-      case Stmt.ExprStmt(Expr.Assign(n, _)) => internal += n.lexeme
-      case Stmt.Block(ss)              => ss.foreach(scanTargets)
-      case Stmt.If(_, t, e)            => scanTargets(t); e.foreach(scanTargets)
-      case Stmt.While(_, b)            => scanTargets(b)
-      case _                           => ()
+      case Stmt.VarDecl(n, None)            => declaredNone += n.lexeme
+      case Stmt.VarDecl(n, Some(_))         => assigned += n.lexeme
+      case Stmt.ExprStmt(Expr.Assign(n, _)) => assigned += n.lexeme
+      case Stmt.Block(ss)                   => ss.foreach(scanTargets)
+      case Stmt.If(_, t, e)                 => scanTargets(t); e.foreach(scanTargets)
+      case Stmt.While(_, b)                 => scanTargets(b)
+      case _                                => ()
     statements.foreach(scanTargets)
-    // A name can't be both; inputs win only if never assigned.
-    internal --= inputs
+
+    val inputs   = declaredNone.clone(); inputs --= assigned // never-assigned only
+    val internal = assigned
 
     // 2. Compile statements into a flat instruction list with patched jumps.
     val code = ListBuffer.empty[Instr]

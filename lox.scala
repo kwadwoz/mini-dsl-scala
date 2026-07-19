@@ -26,10 +26,13 @@ object Lox:
     val gen = FsmCodegen.generate(statements)
     java.nio.file.Files.writeString(java.nio.file.Path.of("design.v"), gen.verilog)
     java.nio.file.Files.writeString(java.nio.file.Path.of("client_sdk.py"), gen.python)
-    println("\n=== design.v ===")
-    println(gen.verilog)
-    println("=== client_sdk.py ===")
-    println(gen.python)
+    println("\n(wrote design.v and client_sdk.py)")
+
+    // Equivalence check: interpreter (golden model) vs simulated FPGA design.
+    println("\n=== interpreter vs FPGA equivalence check ===")
+    val ok = Verify.run(statements, gen)
+    println(if ok then "\nALL MATCH — the hardware matches the interpreter."
+            else "\nMISMATCH — see table above.")
 
 // A tiny AST pretty-printer so we can eyeball parser output.
 object AstPrinter:
@@ -56,13 +59,14 @@ object AstPrinter:
 @main def main(): Unit =
   val source =
     """
-      |var n;              // host input
-      |var i = 0;
-      |var sum = 0;
-      |while (i < n) {     // loop -> FSM
-      |  sum = sum + i;
-      |  i = i + 1;
+      |var a;              // host input
+      |var b;              // host input
+      |var m;
+      |if (a > b) {        // conditional -> FSM
+      |  m = a;
+      |} else {
+      |  m = b;
       |}
-      |return sum;         // sum of 0..n-1
+      |return m;           // max(a, b)
       |""".stripMargin
   Lox.run(source)
