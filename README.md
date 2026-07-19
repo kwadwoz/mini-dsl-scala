@@ -38,6 +38,7 @@ The generated design targets the **Lattice ECP5-85F** FPGAs on the
 - [The DSL](#the-dsl)
 - [The hardware calling convention](#the-hardware-calling-convention)
 - [Quick start](#quick-start)
+- [Examples](#examples)
 - [Example: `max(a, b)`](#example-maxa-b)
 - [Example: `sum(0..n-1)`](#example-sum0n-1)
 - [Correctness: interpreter ↔ FPGA equivalence check](#correctness-interpreter--fpga-equivalence-check)
@@ -109,8 +110,8 @@ A small subset of [Lox](https://craftinginterpreters.com/) (from
 
 | Feature            | Example                          |
 | ------------------ | -------------------------------- |
-| Integer variables  | `var x = 3;`                     |
-| Host inputs        | `var a;`  *(never assigned)*     |
+| Host input         | `var a;`  *(no initializer)*     |
+| Local variable     | `var x = 3;`                     |
 | Assignment         | `x = x + 1;`                     |
 | Arithmetic         | `+ - * /`                        |
 | Comparisons        | `< <= > >= == !=`                |
@@ -121,6 +122,19 @@ A small subset of [Lox](https://craftinginterpreters.com/) (from
 
 All values are **32-bit unsigned** with wraparound arithmetic, matching the
 generated hardware exactly.
+
+**Inputs vs. locals — the one rule to remember:**
+
+- `var a;` (no initializer) → a **host input**. The Python client writes it via
+  `app.write` before the program runs.
+- `var x = 0;` (has an initializer) → a **local** working register, not exposed
+  to the host.
+
+A host input can still be reassigned inside the program (e.g. Euclid's algorithm
+mutates its inputs `a` and `b`); the hardware seeds a working register from the
+input value at start, so both reading and mutating an input work as expected. If
+you want a scratch local, give it an initializer so it is *not* exposed as an
+input.
 
 ---
 
@@ -135,12 +149,13 @@ talks to it purely through memory-mapped registers:
 | `STATUS`  | `0x04`      | read      | bit 0 = **done**, bit 1 = **busy**        |
 | `ARG[i]`  | `0x10 + 4i` | write     | host inputs — one per `var x;`            |
 | `RESULT`  | `0x40`      | read      | the `return` value, valid once `done`     |
-| var debug | `0x44 + 4j` | read      | every internal variable (for inspection)  |
+| `<var>_dbg` | `0x44 + 4j` | read    | every working register (for inspection)   |
 
 Mapping of DSL constructs to hardware:
 
-- `var x;` (never assigned) → a **host-writable input register**.
-- `var y = expr;` / `x = expr;` → an **internal register**, updated by the FSM.
+- `var x;` → a **host-writable input register** `in_x`.
+- `var y = expr;` / `x = expr;` → an **internal register**, updated by the FSM
+  (a reassigned input is seeded from `in_x` at start).
 - `if` / `while` → **FSM states** (conditional / looping next-state).
 - `return expr;` → writes `RESULT`, raises `done`.
 
@@ -171,17 +186,40 @@ print(app.read(Regs.RESULT))             # read the result
 
 ```bash
 cd mini-dsl-scala
-scala-cli run .
+scala-cli run . -- examples/sum.dsl    # compile a .dsl file
+scala-cli run .                        # or the built-in default program (max)
 ```
 
 This will:
 
 1. Print the parsed **AST**.
 2. Write **`design.v`** and **`client_sdk.py`**.
-3. Run the **interpreter ↔ FPGA equivalence check** and print a PASS/FAIL table.
+3. Print an **ECP5 synthesis report** (LUTs / FFs / % of the chip) — skipped
+   automatically if Yosys isn't installed.
+4. Run the **interpreter ↔ FPGA equivalence check** and print a PASS/FAIL table.
 
-To compile a different program, edit the `source` string in
-[`lox.scala`](lox.scala) and re-run.
+Pass any `.dsl` file as the argument after `--`; with no argument it runs the
+built-in default (`max`). See [`examples/`](examples/) for programs to try.
+
+---
+
+## Examples
+
+Ready-to-run programs in [`examples/`](examples/):
+
+| File                                 | What it computes | Language features                 |
+| ------------------------------------ | ---------------- | --------------------------------- |
+| [`max.dsl`](examples/max.dsl)        | `max(a, b)`      | `if` / `else`, local `var m = 0;` |
+| [`sum.dsl`](examples/sum.dsl)        | `sum(0..n-1)`    | `while` loop, accumulator         |
+| [`gcd.dsl`](examples/gcd.dsl)        | `gcd(a, b)`      | `while` + nested `if/else`, reassigned inputs |
+
+```bash
+scala-cli run . -- examples/gcd.dsl
+```
+
+Write your own: any `.dsl` file with `var` declarations, arithmetic, `if`,
+`while`, and a `return`. Declare host inputs as `var name;` and read the result
+from the `RESULT` register in the generated `client_sdk.py`.
 
 ---
 
@@ -190,7 +228,7 @@ To compile a different program, edit the `source` string in
 ```
 var a;              // host input
 var b;              // host input
-var m;
+var m = 0;          // scratch local (initialized -> not a host input)
 if (a > b) {        // conditional -> FSM
   m = a;
 } else {
@@ -259,7 +297,9 @@ ALL MATCH — the hardware matches the interpreter.
 ```
 
 If the two ever disagree, the build says `MISMATCH` and shows exactly which input
-broke — this has already caught a real codegen bug during development.
+broke — this has already caught real codegen bugs during development. A
+non-terminating program is reported as `SKIP` (guarded by an interpreter step cap
+and a simulation watchdog, so the build never hangs).
 
 ---
 
@@ -330,7 +370,9 @@ TODO: paste `mrg run client_sdk.py` output
 | `verilog.scala`      | `VerilogCodegen` — combinational backend (v1, straight-line)  |
 | `fsm.scala`          | `FsmCodegen` — FSM backend supporting `if` / `while`          |
 | `verify.scala`       | Interpreter ↔ iverilog equivalence check                      |
-| `lox.scala`          | Error reporting, AST printer, and `main` entry point          |
+| `synth.scala`        | Yosys ECP5 synthesis + utilization report                     |
+| `lox.scala`          | Error reporting, AST printer, `main` (reads a `.dsl` file arg)|
+| `examples/*.dsl`     | Sample programs (`max`, `sum`, `gcd`)                         |
 | `tb.v`               | Hand-written Wishbone testbench for the `sum` example         |
 
 Generated artifacts (`design.v`, `client_sdk.py`, `tb_verify.v`, `sim_verify`)
@@ -340,10 +382,11 @@ are git-ignored.
 
 ## Roadmap
 
+- [x] Read a DSL program from a `.dsl` file / CLI arg
+- [x] Automatic ECP5 synthesis + utilization report on every build
 - [ ] Functions → reusable hardware sub-FSMs
 - [ ] Map `*` onto ECP5 DSP `MULT18X18` blocks
-- [ ] `build.scala`: one command to generate, simulate, synth, and report Fmax
-- [ ] Read a DSL program from a file / CLI arg instead of the hardcoded `source`
+- [ ] Report Fmax / timing (nextpnr) alongside utilization
 - [ ] Deploy on the Manhattan cloud and record results + video
 - [ ] More types (signed integers, booleans as 1-bit)
 
