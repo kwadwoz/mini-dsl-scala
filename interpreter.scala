@@ -6,11 +6,16 @@ import scala.collection.mutable
 // comparisons, exactly like the generated Verilog (wire [31:0], no `signed`).
 object Interpreter:
   private val Mask = 0xFFFFFFFFL
+  private val MaxSteps = 10_000_000 // guard against non-terminating programs
   private class ReturnEx(val value: Long) extends RuntimeException
+  class NonTerminating(msg: String) extends RuntimeException(msg)
+
+  private var steps = 0
 
   // Run `statements` with the given input variables; returns the 32-bit result.
   def run(statements: List[Stmt], inputs: Map[String, Long]): Long =
     val env = mutable.Map.empty[String, Long]
+    steps = 0
     inputs.foreach((k, v) => env(k) = v & Mask)
     try
       statements.foreach(exec(_, env))
@@ -27,7 +32,11 @@ object Interpreter:
     case Stmt.If(c, t, e) =>
       if truthy(eval(c, env)) then exec(t, env) else e.foreach(exec(_, env))
     case Stmt.While(c, b) =>
-      while truthy(eval(c, env)) do exec(b, env)
+      while truthy(eval(c, env)) do
+        steps += 1
+        if steps > MaxSteps then
+          throw NonTerminating(s"program exceeded $MaxSteps loop iterations")
+        exec(b, env)
 
   private def truthy(v: Long): Boolean = (v & Mask) != 0L
 

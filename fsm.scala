@@ -39,8 +39,15 @@ object FsmCodegen:
       case _                                => ()
     statements.foreach(scanTargets)
 
-    val inputs   = declaredNone.clone(); inputs --= assigned // never-assigned only
-    val internal = assigned
+    // Every `var x;` is a host INPUT register (in_x). Every assigned var is an
+    // INTERNAL working register (x). A var that is both — declared as input and
+    // later reassigned (e.g. gcd's a, b) — gets its working register seeded from
+    // the input at start. A pure input (never assigned) is read directly as in_x.
+    val hostInputs = declaredNone             // all host-writable in_x registers
+    val internal   = assigned                 // all working registers
+    val dual       = declaredNone.intersect(assigned) // input AND reassigned
+    // Signal name used inside expressions.
+    def sig(name: String): String = if internal.contains(name) then name else s"in_$name"
 
     // 2. Compile statements into a flat instruction list with patched jumps.
     val code = ListBuffer.empty[Instr]
@@ -76,7 +83,7 @@ object FsmCodegen:
     // 3. Expression -> Verilog. Inputs use in_<name>, internals use <name>.
     def emit(e: Expr): String = e match
       case Expr.Literal(v)      => literal(v)
-      case Expr.Variable(t)     => if inputs.contains(t.lexeme) then s"in_${t.lexeme}" else t.lexeme
+      case Expr.Variable(t)     => sig(t.lexeme)
       case Expr.Grouping(inner) => s"(${emit(inner)})"
       case Expr.Unary(op, r)    => if op.tokenType == MINUS then s"(-${emit(r)})" else s"(!${emit(r)})"
       case Expr.Binary(l, o, r) => s"(${emit(l)} ${binOp(o)} ${emit(r)})"
@@ -85,7 +92,7 @@ object FsmCodegen:
 
     // 4. Register map (byte offsets, word address = offset >> 2).
     val CTRL = 0x00; val STATUS = 0x04; val RESULT = 0x40
-    val inList  = inputs.toList
+    val inList  = hostInputs.toList
     val intList = internal.toList
     val argOff  = inList.zipWithIndex.map((n, i) => n -> (0x10 + i * 4)).toMap
     val dbgOff  = intList.zipWithIndex.map((n, j) => n -> (0x44 + j * 4)).toMap
@@ -139,7 +146,9 @@ object FsmCodegen:
     intList.foreach(n => v ++= s"      $n <= 32'h0;\n")
     v ++= "    end else begin\n"
     v ++= "      case (state)\n"
-    v ++= "        S_IDLE: if (start) begin done <= 1'b0; busy <= 1'b1; state <= 16'd1; end\n"
+    // On start: clear flags, seed reassigned inputs (dual vars) from their input regs.
+    val seed = intList.filter(dual.contains).map(n => s"$n <= in_$n; ").mkString
+    v ++= s"        S_IDLE: if (start) begin done <= 1'b0; busy <= 1'b1; ${seed}state <= 16'd1; end\n"
     code.zipWithIndex.foreach { (instr, i) =>
       val st = i + 1
       val next = i + 2
@@ -162,7 +171,7 @@ object FsmCodegen:
       RegInfo("status", STATUS, "out") ::
       inList.map(n => RegInfo(n, argOff(n), "in")) :::
       RegInfo("result", RESULT, "out") ::
-      intList.map(n => RegInfo(n, dbgOff(n), "out"))
+      intList.map(n => RegInfo(s"${n}_dbg", dbgOff(n), "out")) // distinct from input regs
 
     val p = StringBuilder()
     p ++= "import manhattan_reasoning_gym as mrg\n\n"

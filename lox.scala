@@ -28,6 +28,10 @@ object Lox:
     java.nio.file.Files.writeString(java.nio.file.Path.of("client_sdk.py"), gen.python)
     println("\n(wrote design.v and client_sdk.py)")
 
+    // ECP5 synthesis utilization report (skips if yosys isn't installed).
+    println("\n=== ECP5 synth report ===")
+    Synth.report()
+
     // Equivalence check: interpreter (golden model) vs simulated FPGA design.
     println("\n=== interpreter vs FPGA equivalence check ===")
     val ok = Verify.run(statements, gen)
@@ -56,17 +60,28 @@ object AstPrinter:
     case Expr.Grouping(e)         => s"(group ${print(e)})"
     case Expr.Assign(name, v)     => s"(= ${name.lexeme} ${print(v)})"
 
-@main def main(): Unit =
-  val source =
-    """
-      |var a;              // host input
-      |var b;              // host input
-      |var m;
-      |if (a > b) {        // conditional -> FSM
-      |  m = a;
-      |} else {
-      |  m = b;
-      |}
-      |return m;           // max(a, b)
-      |""".stripMargin
+// Default program used when no file is given on the command line.
+private val defaultSource =
+  """
+    |var a;              // host input
+    |var b;              // host input
+    |var m = 0;          // scratch local (initialized -> not a host input)
+    |if (a > b) {        // conditional -> FSM
+    |  m = a;
+    |} else {
+    |  m = b;
+    |}
+    |return m;           // max(a, b)
+    |""".stripMargin
+
+// Usage:  scala-cli run . -- examples/sum.dsl
+//         scala-cli run .                (runs the built-in default program)
+@main def main(args: String*): Unit =
+  val source = args.headOption match
+    case Some(path) =>
+      println(s"(reading $path)")
+      java.nio.file.Files.readString(java.nio.file.Path.of(path))
+    case None =>
+      println("(no file given — using built-in default program; pass a .dsl path to override)")
+      defaultSource
   Lox.run(source)

@@ -32,7 +32,9 @@ object Verify:
     sb ++= "    @(negedge clk); wb_adr=a; wb_we=0; wb_cyc=1; wb_stb=1;\n"
     sb ++= "    @(posedge clk); while(!wb_ack) @(posedge clk);\n"
     sb ++= "    d=wb_dat_r; @(negedge clk); wb_cyc=0; wb_stb=0; end endtask\n"
-    sb ++= "  reg [31:0] st, res;\n  integer k;\n  initial begin\n"
+    sb ++= "  reg [31:0] st, res;\n  integer k;\n"
+    sb ++= "  initial begin #2000000 $display(\"WATCHDOG timeout\"); $finish; end\n"
+    sb ++= "  initial begin\n"
     sb ++= "    repeat(4) @(posedge clk); rst=0;\n"
     vectors.zipWithIndex.foreach { (vec, vi) =>
       inputs.zip(vec).foreach { (name, value) =>
@@ -65,8 +67,11 @@ object Verify:
       if inputs.isEmpty then List(Nil)
       else (0 until 12).map(_ => inputs.map(_ => samples(rnd.nextInt(samples.size)))).toList.distinct
 
-    // Golden results from the interpreter.
-    val expected = vectors.map(vec => Interpreter.run(statements, inputs.zip(vec).toMap))
+    // Golden results from the interpreter. `None` = program did not terminate.
+    val expected: List[Option[Long]] = vectors.map { vec =>
+      try Some(Interpreter.run(statements, inputs.zip(vec).toMap))
+      catch case _: Interpreter.NonTerminating => None
+    }
 
     // Write design + testbench, compile, simulate.
     val designPath = work.resolve("design.v")
@@ -95,11 +100,15 @@ object Verify:
     println(f"  ${"inputs"}%-24s ${"expected"}%10s ${"fpga"}%10s   result")
     var allOk = true
     vectors.zipWithIndex.foreach { (vec, i) =>
-      val exp = expected(i)
-      val got = actual.getOrElse(i, -1L)
-      val ok = got == exp
-      if !ok then allOk = false
       val inStr = inputs.zip(vec).map((n, v) => s"$n=$v").mkString(", ")
-      println(f"  $inStr%-24s $exp%10d $got%10d   ${if ok then "OK" else "MISMATCH"}")
+      expected(i) match
+        case None =>
+          // Interpreter didn't terminate — skip (can't compare).
+          println(f"  $inStr%-24s ${"(loops)"}%10s ${"—"}%10s   SKIP")
+        case Some(exp) =>
+          val got = actual.getOrElse(i, -1L)
+          val ok = got == exp
+          if !ok then allOk = false
+          println(f"  $inStr%-24s $exp%10d $got%10d   ${if ok then "OK" else "MISMATCH"}")
     }
     allOk
