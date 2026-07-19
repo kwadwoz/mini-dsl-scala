@@ -7,3 +7,12 @@ target/
 *.class
 *.tasty
 .DS_Store
+
+# Generated hardware / simulation artifacts (produced by `scala-cli run .`)
+design.v
+client_sdk.py
+tb_verify.v
+sim_verify
+*.vcd
+*.bit
+*.json.bit
